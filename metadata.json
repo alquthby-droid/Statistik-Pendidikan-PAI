@@ -1,0 +1,6 @@
+{
+  "name": "Statistik Pendidikan S2 PAI",
+  "description": "Aplikasi analisis statistik pendidikan mata kuliah S2 PAI: unggah foto lembar data/nilai, analisis sebaran, tabel distribusi frekuensi, Z-score, dan visualisasi grafik interaktif. Pengembang: Husni, S.Kom.I.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

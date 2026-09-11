@@ -1,0 +1,170 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="35%" stop-color="#eab308" />
+      <stop offset="70%" stop-color="#ca8a04" />
+      <stop offset="100%" stop-color="#a16207" />
+    </linearGradient>
+
+    <linearGradient id="emeraldShield" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#059669" />
+      <stop offset="50%" stop-color="#047857" />
+      <stop offset="100%" stop-color="#064e3b" />
+    </linearGradient>
+
+    <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7" />
+      <stop offset="100%" stop-color="#0369a1" />
+    </linearGradient>
+
+    <linearGradient id="flameGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#dc2626" />
+      <stop offset="40%" stop-color="#ea580c" />
+      <stop offset="80%" stop-color="#facc15" />
+      <stop offset="100%" stop-color="#ffffff" />
+    </linearGradient>
+
+    <!-- Circular text paths -->
+    <!-- Top arc: radius 195 from (250,250) -->
+    <path id="topTextArc" d="M 65 250 A 185 185 0 1 1 435 250" fill="none" />
+    <!-- Bottom arc: radius 195 from (250,250) -->
+    <path id="bottomTextArc" d="M 435 250 A 185 185 0 0 1 65 250" fill="none" />
+  </defs>
+
+  <!-- 1. Outer Hexadecagram / 16-Pointed Islamic Star Rosette Rim -->
+  <g fill="url(#goldGradient)" stroke="#854d0e" stroke-width="1.5">
+    <circle cx="250" cy="250" r="236" />
+  </g>
+  <circle cx="250" cy="250" r="230" fill="#064e3b" stroke="url(#goldGradient)" stroke-width="3" />
+
+  <!-- 2. Circular Outer Ribbon (Dark Green) for Institution Inscription -->
+  <circle cx="250" cy="250" r="222" fill="#065f46" stroke="#fbbf24" stroke-width="2" />
+  <circle cx="250" cy="250" r="156" fill="#f8fafc" stroke="#fbbf24" stroke-width="3" />
+
+  <!-- 3. Arced Typography along Circular Ribbon -->
+  <text fill="#ffffff" font-family="'Times New Roman', Times, Georgia, serif" font-size="16.5" font-weight="900" letter-spacing="2.2">
+    <textPath href="#topTextArc" startOffset="50%" text-anchor="middle">
+      INSTITUT AGAMA ISLAM AL-JIHAD SHALAHUDDIN AL-AYYUBI
+    </textPath>
+  </text>
+
+  <!-- Left & Right Gold Star Badges -->
+  <g fill="#facc15" stroke="#a16207" stroke-width="0.8">
+    <!-- Left Star at 9 o'clock -->
+    <path d="M 60 250 L 63 243 L 70 243 L 64 248 L 66 255 L 60 251 L 54 255 L 56 248 L 50 243 L 57 243 Z" transform="translate(4, 0)" />
+    <!-- Right Star at 3 o'clock -->
+    <path d="M 440 250 L 443 243 L 450 243 L 444 248 L 446 255 L 440 251 L 434 255 L 436 248 L 430 243 L 437 243 Z" transform="translate(-4, 0)" />
+  </g>
+
+  <text fill="#fef08a" font-family="'Times New Roman', Times, Georgia, serif" font-size="19" font-weight="900" letter-spacing="6">
+    <textPath href="#bottomTextArc" startOffset="50%" text-anchor="middle">
+      ★ JAKARTA ★
+    </textPath>
+  </text>
+
+  <!-- 4. Inner Medallion: 5-Petaled Flower / Islamic Shield -->
+  <!-- Inner circular field with sky / royal Islamic emerald background -->
+  <circle cx="250" cy="250" r="150" fill="url(#emeraldShield)" />
+
+  <!-- Subtle Islamic Geometric Star Background Pattern -->
+  <g opacity="0.15" stroke="#fef08a" stroke-width="2" fill="none">
+    <polygon points="250,110 349,151 390,250 349,349 250,390 151,349 110,250 151,151" />
+    <polygon points="250,390 288,342 349,349 342,288 390,250 342,212 349,151 288,158 250,110 212,158 151,151 158,212 110,250 158,288 151,349 212,342" />
+    <circle cx="250" cy="250" r="130" />
+    <circle cx="250" cy="250" r="95" />
+  </g>
+
+  <!-- 5. Central Islamic Shield of Shalahuddin Al-Ayyubi -->
+  <path d="M 250 120 C 315 120 345 145 345 220 C 345 285 285 325 250 345 C 215 325 155 285 155 220 C 155 145 185 120 250 120 Z" 
+        fill="#ffffff" stroke="url(#goldGradient)" stroke-width="5" />
+  <path d="M 250 128 C 308 128 335 150 335 218 C 335 277 282 313 250 332 C 218 313 165 277 165 218 C 165 150 192 128 250 128 Z" 
+        fill="#f0fdf4" stroke="#047857" stroke-width="1.8" />
+
+  <!-- 6. Radiant Golden Sun Rays from center -->
+  <g stroke="#f59e0b" stroke-width="2" opacity="0.75">
+    <line x1="250" y1="135" x2="250" y2="155" />
+    <line x1="225" y1="140" x2="233" y2="157" />
+    <line x1="275" y1="140" x2="267" y2="157" />
+    <line x1="205" y1="155" x2="218" y2="169" />
+    <line x1="295" y1="155" x2="282" y2="169" />
+  </g>
+
+  <!-- 7. Crescent Moon (Hilal) & Golden Star of Islamic Higher Education -->
+  <path d="M 250 138 A 26 26 0 0 0 226 182 A 22 22 0 0 1 250 152 A 22 22 0 0 1 274 182 A 26 26 0 0 0 250 138 Z" 
+        fill="url(#goldGradient)" stroke="#b45309" stroke-width="0.8" />
+  <!-- Radiant 5-Point Star inside crescent -->
+  <polygon points="250,146 253,155 262,155 255,160 258,169 250,164 242,169 245,160 238,155 247,155" 
+           fill="#f59e0b" stroke="#92400e" stroke-width="0.5" />
+
+  <!-- 8. Torch of Jihad Knowledge (Obor Perjuangan Ilmu Shalahuddin Al-Ayyubi) -->
+  <!-- Torch Flame -->
+  <path d="M 250 155 C 243 170 236 182 245 198 C 248 190 252 188 255 198 C 264 182 257 170 250 155 Z" 
+        fill="url(#flameGrad)" />
+  <!-- Torch Base / Handle -->
+  <polygon points="244,198 256,198 253,218 247,218" fill="#ca8a04" stroke="#854d0e" stroke-width="1" />
+  <rect x="242" y="196" width="16" height="4" rx="1.5" fill="#facc15" stroke="#a16207" stroke-width="0.8" />
+
+  <!-- 9. Open Holy Quran / Kitab Suci (Simbol Wahyu & Ilmu Pengetahuan PAI) -->
+  <!-- Left Page Stack -->
+  <path d="M 250 252 C 215 244 185 247 172 258 L 178 226 C 192 216 220 214 250 222 Z" 
+        fill="#ffffff" stroke="#047857" stroke-width="2" />
+  <path d="M 250 256 C 215 248 185 251 174 262 L 176 258 C 188 248 217 245 250 253 Z" 
+        fill="#047857" />
+
+  <!-- Right Page Stack -->
+  <path d="M 250 252 C 285 244 315 247 328 258 L 322 226 C 308 216 280 214 250 222 Z" 
+        fill="#ffffff" stroke="#047857" stroke-width="2" />
+  <path d="M 250 256 C 285 248 315 251 326 262 L 324 258 C 312 248 283 245 250 253 Z" 
+        fill="#047857" />
+
+  <!-- Book Spine Center Divider -->
+  <line x1="250" y1="222" x2="250" y2="256" stroke="#065f46" stroke-width="2.5" />
+
+  <!-- Arabic Calligraphy "اقرأ" (Iqra') on open book pages -->
+  <g fill="#065f46" stroke="#065f46" stroke-linecap="round">
+    <!-- Left text lines on page -->
+    <line x1="188" y1="230" x2="235" y2="230" stroke-width="1.5" opacity="0.65" />
+    <line x1="186" y1="236" x2="235" y2="236" stroke-width="1.5" opacity="0.65" />
+    <line x1="188" y1="242" x2="225" y2="242" stroke-width="1.5" opacity="0.65" />
+    <line x1="190" y1="248" x2="233" y2="248" stroke-width="1.5" opacity="0.65" />
+
+    <!-- Right text lines on page -->
+    <line x1="265" y1="230" x2="312" y2="230" stroke-width="1.5" opacity="0.65" />
+    <line x1="265" y1="236" x2="314" y2="236" stroke-width="1.5" opacity="0.65" />
+    <line x1="275" y1="242" x2="312" y2="242" stroke-width="1.5" opacity="0.65" />
+    <line x1="267" y1="248" x2="310" y2="248" stroke-width="1.5" opacity="0.65" />
+
+    <!-- Central Calligraphy Iqra -->
+    <path d="M 242 238 Q 250 230 258 238" fill="none" stroke-width="2" />
+  </g>
+
+  <!-- 10. Rehal / Wooden Quran Stand (Tatakan Al-Quran bersilang) -->
+  <polygon points="215,268 250,254 285,268 275,282 250,266 225,282" fill="#ca8a04" stroke="#854d0e" stroke-width="1.5" />
+  <polygon points="230,278 250,266 270,278 262,298 250,285 238,298" fill="#a16207" stroke="#713f12" stroke-width="1.5" />
+
+  <!-- 11. Golden Banner / Ribbon with "SHALAHUDDIN AL-AYYUBI" -->
+  <g>
+    <!-- Ribbon ends -->
+    <polygon points="120,336 150,320 150,352 120,358" fill="#b45309" />
+    <polygon points="380,336 350,320 350,352 380,358" fill="#b45309" />
+    
+    <!-- Ribbon body -->
+    <path d="M 140 334 Q 250 318 360 334 L 354 360 Q 250 344 146 360 Z" 
+          fill="url(#goldGradient)" stroke="#854d0e" stroke-width="1.8" />
+    
+    <!-- Text on Ribbon -->
+    <text x="250" y="347" text-anchor="middle" font-family="'Times New Roman', Times, Georgia, serif" font-size="12.5" font-weight="900" fill="#451a03" letter-spacing="2">
+      AL-JIHAD SHALAHUDDIN AL-AYYUBI
+    </text>
+  </g>
+
+  <!-- 12. Lower Sub-Text: IAI AL-JIHAD JAKARTA -->
+  <text x="250" y="380" text-anchor="middle" font-family="'Times New Roman', Times, Georgia, serif" font-size="20" font-weight="900" fill="#ffffff" letter-spacing="3" stroke="#064e3b" stroke-width="1">
+    IAI AL-JIHAD
+  </text>
+  <text x="250" y="402" text-anchor="middle" font-family="'Times New Roman', Times, Georgia, serif" font-size="12" font-weight="700" fill="#fef08a" letter-spacing="4">
+    PASCASARJANA • JAKARTA
+  </text>
+</svg>
