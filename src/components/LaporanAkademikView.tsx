@@ -22,6 +22,7 @@ import { AcademicReportDocument } from "./AcademicReportDocument";
 import { exportPagesToPdf, PdfExportProgress } from "../utils/pdfExport";
 import { exportToPptx } from "../utils/pptxExport";
 import { LampiranGambarModal } from "./LampiranGambarModal";
+import { NarasiMakalahModal } from "./NarasiMakalahModal";
 import { IAI_ALJIHAD_SIX_GROUPS_DEFINITIONS, SixGroupDefinition } from "../data/institutions";
 import { ChevronDown, ChevronUp, FileSpreadsheet, X, CheckCircle2 } from "lucide-react";
 
@@ -54,6 +55,7 @@ export const LaporanAkademikView: React.FC<LaporanAkademikViewProps> = ({
   const [isLoadingAi, setIsLoadingAi] = useState<boolean>(false);
   const [aiError, setAiError] = useState<string | null>(null);
   const [isLampiranModalOpen, setIsLampiranModalOpen] = useState<boolean>(false);
+  const [isNarasiModalOpen, setIsNarasiModalOpen] = useState<boolean>(false);
 
   // PDF Export states
   const [isExportingPdf, setIsExportingPdf] = useState<boolean>(false);
@@ -370,6 +372,16 @@ Sebaran nilai peserta didik menunjukkan karakteristik pencapaian kompetensi pada
               </button>
             )}
 
+            {/* Narasi Makalah & Jadwal 7 Kelompok Pascasarjana */}
+            <button
+              onClick={() => setIsNarasiModalOpen(true)}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2.5 bg-teal-50 hover:bg-teal-100 text-teal-950 text-xs font-bold rounded-xl border border-teal-300 shadow-2xs transition-all cursor-pointer active:scale-98"
+              title="Lihat Naskah Narasi Ilmiah Sesuai Judul Makalah Masing-Masing Kelompok & Matriks Jadwal IAI ASA 2026"
+            >
+              <BookOpen className="w-4 h-4 text-teal-700" />
+              <span>Narasi Makalah & Jadwal (7 Kelompok)</span>
+            </button>
+
             {/* Lampiran Gambar & Foto Riset */}
             <button
               onClick={() => setIsLampiranModalOpen(true)}
@@ -491,12 +503,12 @@ Sebaran nilai peserta didik menunjukkan karakteristik pencapaian kompetensi pada
         ref={documentContainerRef}
         className={activeTab === "pdfPreview" ? "block" : "hidden print:block"}
       >
-        {/* Quick Group Selector Bar (Kelompok I s/d Kelompok VI) */}
+        {/* Quick Group Selector Bar (Kelompok I s/d Kelompok VII) */}
         <div className="mb-4 bg-white border border-emerald-300/90 rounded-2xl p-3 sm:p-4 shadow-xs no-print space-y-3">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-2">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-xl bg-emerald-800 text-white flex items-center justify-center font-black text-sm shadow-xs shrink-0">
-                6
+                7
               </div>
               <div>
                 <h4 className="text-xs font-black text-slate-900 flex items-center gap-1.5">
@@ -506,7 +518,7 @@ Sebaran nilai peserta didik menunjukkan karakteristik pencapaian kompetensi pada
                   </span>
                 </h4>
                 <p className="text-[11px] text-slate-500 mt-0.5">
-                  Tersedia 6 kelompok resmi (29 mahasiswa). Klik kelompok untuk memperbarui Cover, Pengesahan, dan Lampiran PDF seketika.
+                  Tersedia 7 kelompok resmi. Klik kelompok untuk memperbarui Cover, Pengesahan, Lampiran Jadwal & Narasi Makalah seketika.
                 </p>
               </div>
             </div>
@@ -517,7 +529,7 @@ Sebaran nilai peserta didik menunjukkan karakteristik pencapaian kompetensi pada
                 className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-300 font-semibold rounded-lg cursor-pointer transition-colors shadow-2xs"
               >
                 <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-700" />
-                <span>Rekap 6 Kelompok (29 Mhs)</span>
+                <span>Rekap 7 Kelompok (29 Mhs)</span>
               </button>
               {onOpenGroupConfig && (
                 <button
@@ -533,8 +545,8 @@ Sebaran nilai peserta didik menunjukkan karakteristik pencapaian kompetensi pada
             </div>
           </div>
 
-          {/* 6 Group Cards Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+          {/* 7 Group Cards Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
             {IAI_ALJIHAD_SIX_GROUPS_DEFINITIONS.map((grp) => {
               const isCurrentActive =
                 groupInfo?.groupName?.includes(grp.roman) ||
@@ -748,20 +760,49 @@ Sebaran nilai peserta didik menunjukkan karakteristik pencapaian kompetensi pada
         />
       )}
 
-      {/* Rekap 6 Kelompok Modal Dialog */}
+      {/* Narasi Makalah & Jadwal 7 Kelompok Modal */}
+      <NarasiMakalahModal
+        isOpen={isNarasiModalOpen}
+        onClose={() => setIsNarasiModalOpen(false)}
+        activeGroupNumber={(() => {
+          const matchNumber = groupInfo?.groupName?.match(/(?:Kelompok\s+|Kel\.\s*)([1-7]|I|II|III|IV|V|VI|VII)\b/i);
+          if (matchNumber) {
+            const raw = matchNumber[1].toUpperCase();
+            const romanMap: Record<string, number> = {
+              "1": 1, "I": 1,
+              "2": 2, "II": 2,
+              "3": 3, "III": 3,
+              "4": 4, "IV": 4,
+              "5": 5, "V": 5,
+              "6": 6, "VI": 6,
+              "7": 7, "VII": 7,
+            };
+            return romanMap[raw] || 1;
+          }
+          return 1;
+        })()}
+        onApplyGroup={(newGroupInfo) => {
+          if (onUpdateGroupInfo) {
+            onUpdateGroupInfo(newGroupInfo);
+          }
+          setIsNarasiModalOpen(false);
+        }}
+      />
+
+      {/* Rekap 7 Kelompok Modal Dialog */}
       {showRekapModal && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5 animate-fadeIn">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden border border-slate-200">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col overflow-hidden border border-slate-200">
             {/* Modal Header */}
             <div className="px-5 py-3.5 bg-gradient-to-r from-emerald-800 to-teal-900 text-white flex items-center justify-between">
               <div className="flex items-center gap-2.5">
                 <FileSpreadsheet className="w-5 h-5 text-emerald-300" />
                 <div>
                   <h3 className="font-bold text-sm">
-                    Rekap Pembagian 6 Kelompok (Kelompok I s/d Kelompok VI)
+                    Rekap Pembagian 7 Kelompok (Kelompok I s/d Kelompok VII)
                   </h3>
                   <p className="text-[11px] text-emerald-200">
-                    Rombel Semester 1 — Total 29 Mahasiswa Pascasarjana Magister PAI IAI Al-Jihad
+                    Silabus Perkuliahan & Makalah — Total 29 Mahasiswa Pascasarjana Magister PAI
                   </p>
                 </div>
               </div>
@@ -778,15 +819,15 @@ Sebaran nilai peserta didik menunjukkan karakteristik pencapaian kompetensi pada
             <div className="p-4 sm:p-5 overflow-y-auto flex-1 space-y-4">
               <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-xs text-emerald-950 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div>
-                  <span className="font-bold">Distribusi Jumlah Anggota:</span> Kelompok I (5), Kelompok II (5), Kelompok III (5), Kelompok IV (5), Kelompok V (5), Kelompok VI (4) = <strong>29 Mahasiswa</strong>.
+                  <span className="font-bold">Distribusi 7 Kelompok:</span> Kel. I (4-5), Kel. II (4-5), Kel. III (4-5), Kel. IV (4-5), Kel. V (4-5), Kel. VI (4), Kel. VII (5) = <strong>29 Mahasiswa Lengkap</strong>.
                 </div>
                 <div className="text-[11px] text-emerald-800 font-semibold shrink-0">
-                  Dosen Pengampu: Dr. Aang Darsono, M.Pd.I (KD-04)
+                  Dosen Pengampu: Dr. Isti Nurhayati, M.Pd (KD-07)
                 </div>
               </div>
 
-              {/* 6 Groups Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              {/* 7 Groups Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
                 {IAI_ALJIHAD_SIX_GROUPS_DEFINITIONS.map((grp) => {
                   const isCurrentActive =
                     groupInfo?.groupName?.includes(grp.roman) ||

@@ -17,6 +17,13 @@ import { LOGO_IAI_ALJIHAD_DATA_URI } from "../assets/logoIaiAlJihad";
 import { LOGO_IAI_ASA_DATA_URI } from "../assets/logoIaiAsa";
 import { IAI_ALJIHAD_SEMESTER_1_STUDENTS } from "../data/students";
 import { IAI_ALJIHAD_LECTURERS, DAFTAR_DOSEN_DOCUMENT_DATA_URI } from "../data/institutions";
+import {
+  IAI_ASA_SEVEN_GROUPS_DEFINITIONS,
+  DAFTAR_KELOMPOK_MAKALAH_DOCUMENT_DATA_URI,
+  getSevenGroupByNumber,
+  getSevenGroupByStudentName,
+  SevenGroupMakalahDefinition,
+} from "../data/makalahSevenGroups";
 
 interface AcademicReportDocumentProps {
   stats: DescriptiveStats;
@@ -57,7 +64,41 @@ export const AcademicReportDocument: React.FC<AcademicReportDocumentProps> = ({
   const academicYear = groupInfo?.academicYear || "Tahun Akademik 2025 Genap";
   const members = groupInfo?.members || [];
   const activeLogo = groupInfo?.logoUrl || LOGO_IAI_ALJIHAD_DATA_URI;
-  const totalPages = 7;
+  const totalPages = 8;
+
+  // Dynamically resolve active 7-Group definition & scholarly paper narratives
+  const activeSevenGroup = React.useMemo<SevenGroupMakalahDefinition>(() => {
+    // 1. Try matching group number from groupInfo.groupName (e.g., "Kelompok 1", "Kelompok I", "Kelompok 7")
+    const matchNumber = groupInfo?.groupName?.match(/(?:Kelompok\s+|Kel\.\s*)([1-7]|I|II|III|IV|V|VI|VII)\b/i);
+    if (matchNumber) {
+      const raw = matchNumber[1].toUpperCase();
+      const romanMap: Record<string, number> = {
+        "1": 1, "I": 1,
+        "2": 2, "II": 2,
+        "3": 3, "III": 3,
+        "4": 4, "IV": 4,
+        "5": 5, "V": 5,
+        "6": 6, "VI": 6,
+        "7": 7, "VII": 7,
+      };
+      const num = romanMap[raw];
+      if (num && num >= 1 && num <= 7) {
+        const found = getSevenGroupByNumber(num);
+        if (found) return found;
+      }
+    }
+
+    // 2. Try matching by student name in active members
+    if (groupInfo?.members && groupInfo.members.length > 0) {
+      for (const m of groupInfo.members) {
+        const found = getSevenGroupByStudentName(m.name);
+        if (found) return found;
+      }
+    }
+
+    // Default to Kelompok 1
+    return IAI_ASA_SEVEN_GROUPS_DEFINITIONS[0];
+  }, [groupInfo]);
 
   // Map 29 official students with calculation data if available
   const rosterStudents = IAI_ALJIHAD_SEMESTER_1_STUDENTS.map((std, idx) => {
@@ -914,7 +955,8 @@ export const AcademicReportDocument: React.FC<AcademicReportDocumentProps> = ({
                 </thead>
                 <tbody className="divide-y divide-slate-300">
                   {rosterStudents.slice(0, 15).map((std) => {
-                    const groupRoman = std.no <= 5 ? "I" : std.no <= 10 ? "II" : std.no <= 15 ? "III" : std.no <= 20 ? "IV" : std.no <= 25 ? "V" : "VI";
+                    const matched7 = getSevenGroupByStudentName(std.name);
+                    const groupRoman = matched7 ? matched7.roman : (std.no <= 4 ? "I" : std.no <= 8 ? "II" : std.no <= 12 ? "III" : std.no <= 16 ? "IV" : std.no <= 20 ? "V" : std.no <= 24 ? "VI" : "VII");
                     const isMyGroup = groupInfo?.members?.some((m) => m.nim === std.nim || m.name.toLowerCase().trim() === std.name.toLowerCase().trim());
 
                     return (
@@ -959,7 +1001,8 @@ export const AcademicReportDocument: React.FC<AcademicReportDocumentProps> = ({
                 </thead>
                 <tbody className="divide-y divide-slate-300">
                   {rosterStudents.slice(15, 29).map((std) => {
-                    const groupRoman = std.no <= 5 ? "I" : std.no <= 10 ? "II" : std.no <= 15 ? "III" : std.no <= 20 ? "IV" : std.no <= 25 ? "V" : "VI";
+                    const matched7 = getSevenGroupByStudentName(std.name);
+                    const groupRoman = matched7 ? matched7.roman : (std.no <= 4 ? "I" : std.no <= 8 ? "II" : std.no <= 12 ? "III" : std.no <= 16 ? "IV" : std.no <= 20 ? "V" : std.no <= 24 ? "VI" : "VII");
                     const isMyGroup = groupInfo?.members?.some((m) => m.nim === std.nim || m.name.toLowerCase().trim() === std.name.toLowerCase().trim());
 
                     return (
@@ -988,7 +1031,7 @@ export const AcademicReportDocument: React.FC<AcademicReportDocumentProps> = ({
                   {/* Summary row on right table to match 15 rows */}
                   <tr className="bg-emerald-50 font-bold text-emerald-950">
                     <td colSpan={4} className="py-0.5 px-2 border-r border-slate-300 text-right text-[7.5px]">
-                      Rekapitulasi: N = 29 Mahasiswa (6 Kelompok)
+                      Rekapitulasi: N = 29 Mahasiswa (7 Kelompok Silabus)
                     </td>
                     <td className="py-0.5 px-1 text-center border-r border-slate-300 text-[7.5px] text-emerald-900">
                       {stats.mean.toFixed(1)}
@@ -1011,7 +1054,7 @@ export const AcademicReportDocument: React.FC<AcademicReportDocumentProps> = ({
             <div className="grid grid-cols-4 gap-1.5 text-center text-[8px]">
               <div className="bg-white p-1 rounded border border-slate-200">
                 <span className="text-slate-500 block">Total Peserta:</span>
-                <strong className="text-slate-900 text-[10px]">29 Mahasiswa (6 Kelompok)</strong>
+                <strong className="text-slate-900 text-[10px]">29 Mahasiswa (7 Kelompok)</strong>
               </div>
               <div className="bg-white p-1 rounded border border-slate-200">
                 <span className="text-slate-500 block">Rentang Nilai:</span>
@@ -1026,10 +1069,10 @@ export const AcademicReportDocument: React.FC<AcademicReportDocumentProps> = ({
                 <strong className="text-amber-800 text-[10px]">{catSedang} Mahasiswa</strong>
               </div>
             </div>
-            {/* 6 Groups Distribution Summary Bar */}
+            {/* 7 Groups Distribution Summary Bar */}
             <div className="mt-1 pt-1 border-t border-slate-200 flex flex-wrap items-center justify-between gap-1 text-[7.5px] text-slate-700">
               <span>
-                <strong>Distribusi 6 Kelompok:</strong> Kel. I (5 Mhs) • Kel. II (5 Mhs) • Kel. III (5 Mhs) • Kel. IV (5 Mhs) • Kel. V (5 Mhs) • Kel. VI (4 Mhs)
+                <strong>Distribusi 7 Kelompok Silabus:</strong> Kel. I (4 Mhs) • Kel. II (4 Mhs) • Kel. III (4 Mhs) • Kel. IV (4 Mhs) • Kel. V (4 Mhs) • Kel. VI (4 Mhs) • Kel. VII (5 Mhs)
               </span>
               <span className="text-emerald-900 font-bold bg-emerald-100 px-1.5 py-0.5 rounded">
                 Aktif di Laporan: {groupInfo?.groupName || "Kelompok I"}
@@ -1067,7 +1110,7 @@ export const AcademicReportDocument: React.FC<AcademicReportDocumentProps> = ({
       </div>
 
       {/* =========================================================
-          PAGE 7: LAMPIRAN II: DOKUMENTASI GAMBAR & INSTRUMEN PENELITIAN PAI
+          PAGE 7: LAMPIRAN II: JADWAL & PEMBAGIAN 7 KELOMPOK MAKALAH IAI ASA 2026
       ========================================================= */}
       <div id="pdf-page-7" className="pdf-page shadow-md border border-slate-300 print:shadow-none print:border-none" style={pageStyle}>
         <div>
@@ -1077,154 +1120,180 @@ export const AcademicReportDocument: React.FC<AcademicReportDocumentProps> = ({
           <div className="flex items-center justify-between border-b-2 border-emerald-900 pb-1.5 mb-2">
             <div>
               <span className="text-[9px] font-bold text-emerald-800 tracking-wider uppercase font-sans">
-                LAMPIRAN II LAPORAN PENELITIAN STATISTIK PENDIDIKAN S2 PAI
+                LAMPIRAN II: DOKUMEN SILABUS & JADWAL MAKALAH STATISTIKA PENDIDIKAN
               </span>
               <h3 className="text-xs font-black text-slate-900 font-sans tracking-wide">
-                DOKUMENTASI GAMBAR, DAFTAR DOSEN PENGAMPU & EMBLEM LEMBAGA
+                JADWAL & PEMBAGIAN 7 KELOMPOK MAKALAH PASCASARJANA IAI ASA TAHUN 2026
               </h3>
             </div>
             <div className="text-right">
-              <span className="text-[8.5px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-900 font-sans border border-emerald-200">
-                Dokumen & Bukti Fisik Otentik
+              <span className="text-[8px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-950 font-sans border border-emerald-300">
+                Dosen: Dr. Isti Nurhayati, M.Pd (KD-07)
               </span>
             </div>
           </div>
 
-          {/* Authentic Document Box: DAFTAR NAMA DOSEN/KODE DOSEN (KD) */}
-          <div className="border border-slate-900 bg-white rounded p-2 mb-2 shadow-2xs font-serif">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-1 mb-1.5">
-              <span className="font-bold text-[10px] text-slate-950 uppercase tracking-wide">
-                DAFTAR NAMA DOSEN/KODE DOSEN (KD):
-              </span>
-              <span className="text-[7.5px] font-sans font-semibold text-emerald-900 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
-                IAI Al-Jihad Shalahuddin Al-Ayyubi Jakarta
-              </span>
+          {/* Authentic Syllabus & Schedule Table (Exact Replica of Uploaded Image) */}
+          <div className="border border-slate-800 rounded bg-white overflow-hidden mb-2 shadow-2xs font-sans">
+            <div className="bg-emerald-950 text-white px-2 py-1 flex items-center justify-between text-[8px] font-bold">
+              <span>MATRIKS JADWAL PRESENTASI PERKULIAHAN KE-2 S/D KE-15 & 7 KELOMPOK</span>
+              <span className="text-amber-300">Kelompok Aktif: {activeSevenGroup.groupName}</span>
+            </div>
+            <table className="w-full text-left border-collapse text-[7.5px]">
+              <thead>
+                <tr className="bg-slate-200 text-slate-900 font-bold border-b border-slate-400">
+                  <th className="py-0.5 px-1.5 border-r border-slate-300 text-center w-20">Perkuliahan Ke</th>
+                  <th className="py-0.5 px-1.5 border-r border-slate-300 text-center w-28">Waktu / Batas Waktu</th>
+                  <th className="py-0.5 px-1.5 border-r border-slate-300 text-center w-20">Kelompok</th>
+                  <th className="py-0.5 px-2">Judul Makalah / Agenda Perkuliahan</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-200">
+                {[
+                  { ke: "Ke-2", time: "08-04-2026 s/d 14-04-2026", group: 1, title: "Ukuran Pemusatan (Mean, Median, Modus)" },
+                  { ke: "Ke-3", time: "15-04-2026 s/d 21-04-2026", group: 2, title: "Ukuran Penyebaran (Rentang, Deviasi, Varians)" },
+                  { ke: "Ke-4", time: "22-04-2026 s/d 28-04-2026", group: 3, title: "Distribusi Normal dan Z-Score" },
+                  { ke: "Ke-5", time: "29-04-2026 s/d 05-05-2026", group: 4, title: "Uji Normalitas Data" },
+                  { ke: "Ke-6", time: "06-05-2026 s/d 12-05-2026", group: 5, title: "Uji Homogenitas Varians" },
+                  { ke: "Ke-7", time: "13-05-2026 s/d 19-05-2026", group: 6, title: "Uji t Satu Sampel (One Sample t-test)" },
+                  { ke: "Ke-8", time: "20-05-2026 s/d 26-05-2026", group: 7, title: "Uji t Dua Sampel Independen" },
+                ].map((row) => {
+                  const isCurrent = row.group === activeSevenGroup.groupNumber;
+                  return (
+                    <tr key={row.ke} className={isCurrent ? "bg-emerald-100/80 font-semibold text-emerald-950" : "hover:bg-slate-50"}>
+                      <td className="py-0.5 px-1.5 border-r border-slate-300 text-center font-bold">{row.ke}</td>
+                      <td className="py-0.5 px-1.5 border-r border-slate-300 text-center font-mono text-[7px]">{row.time}</td>
+                      <td className="py-0.5 px-1.5 border-r border-slate-300 text-center">
+                        <span className={`px-1 py-0.2 rounded text-[7px] ${isCurrent ? "bg-emerald-800 text-white font-bold" : "bg-slate-100 text-slate-700"}`}>
+                          Kelompok {row.group}
+                        </span>
+                      </td>
+                      <td className="py-0.5 px-2">
+                        {row.title} {isCurrent && <span className="text-[7px] text-emerald-800 font-bold ml-1">★ [KELOMPOK AKTIF LAPORAN]</span>}
+                      </td>
+                    </tr>
+                  );
+                })}
+
+                {/* UTS Banner Row */}
+                <tr className="bg-amber-300 font-black text-amber-950 text-center border-y border-amber-400">
+                  <td colSpan={4} className="py-0.5 px-2 tracking-widest text-[8px]">
+                    UJIAN TENGAH SEMESTER (UTS) — EVALUASI KOMPETENSI DASAR STATISTIK PAI
+                  </td>
+                </tr>
+
+                {[
+                  { ke: "Ke-9", time: "03-06-2026 s/d 09-06-2026", group: 1, title: "Uji t Dua Sampel Berpasangan (Paired t-test)" },
+                  { ke: "Ke-10", time: "10-06-2026 s/d 16-06-2026", group: 2, title: "Analisis Varians (ANOVA Satu Jalur)" },
+                  { ke: "Ke-11", time: "17-06-2026 s/d 23-06-2026", group: 3, title: "Uji Korelasi Pearson Product Moment" },
+                  { ke: "Ke-12", time: "24-06-2026 s/d 30-06-2026", group: 4, title: "Uji Korelasi Rank Spearman" },
+                  { ke: "Ke-13", time: "01-07-2026 s/d 07-07-2026", group: 5, title: "Regresi Linier Sederhana" },
+                  { ke: "Ke-14", time: "08-07-2026 s/d 14-07-2026", group: 6, title: "Uji Chi-Square (Kaidah Independensi & Kecocokan)" },
+                  { ke: "Ke-15", time: "15-07-2026 s/d 21-07-2026", group: 7, title: "Uji Validitas dan Reliabilitas Instrumen PAI" },
+                ].map((row) => {
+                  const isCurrent = row.group === activeSevenGroup.groupNumber;
+                  return (
+                    <tr key={row.ke} className={isCurrent ? "bg-emerald-100/80 font-semibold text-emerald-950" : "hover:bg-slate-50"}>
+                      <td className="py-0.5 px-1.5 border-r border-slate-300 text-center font-bold">{row.ke}</td>
+                      <td className="py-0.5 px-1.5 border-r border-slate-300 text-center font-mono text-[7px]">{row.time}</td>
+                      <td className="py-0.5 px-1.5 border-r border-slate-300 text-center">
+                        <span className={`px-1 py-0.2 rounded text-[7px] ${isCurrent ? "bg-emerald-800 text-white font-bold" : "bg-slate-100 text-slate-700"}`}>
+                          Kelompok {row.group}
+                        </span>
+                      </td>
+                      <td className="py-0.5 px-2">
+                        {row.title} {isCurrent && <span className="text-[7px] text-emerald-800 font-bold ml-1">★ [KELOMPOK AKTIF LAPORAN]</span>}
+                      </td>
+                    </tr>
+                  );
+                })}
+
+                {/* UAS Banner Row */}
+                <tr className="bg-amber-300 font-black text-amber-950 text-center border-t border-amber-400">
+                  <td colSpan={4} className="py-0.5 px-2 tracking-widest text-[8px]">
+                    UJIAN AKHIR SEMESTER (UAS) — PENGESAHAN DOKUMEN RISET PASCASARJANA
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          {/* Visual Attachments Showcase (2 Grid Cards) */}
+          <div className="grid grid-cols-2 gap-2 my-1.5 font-sans">
+            {/* Card 1: Official Vector Syllabus Document */}
+            <div className="border border-slate-300 rounded p-1.5 bg-slate-50/90 flex flex-col justify-between">
+              <div className="w-full h-28 bg-white border border-slate-200 rounded flex items-center justify-center p-1 mb-1 overflow-hidden">
+                <img
+                  src={DAFTAR_KELOMPOK_MAKALAH_DOCUMENT_DATA_URI}
+                  alt="Dokumen Otentik Jadwal 7 Kelompok IAI ASA 2026"
+                  className="max-h-full max-w-full object-contain"
+                />
+              </div>
+              <div>
+                <div className="flex items-center justify-between gap-1 mb-0.5">
+                  <span className="font-bold text-[8.5px] text-slate-900 truncate">
+                    Dokumen 1: Jadwal & Matriks 7 Kelompok IAI ASA
+                  </span>
+                  <span className="text-[7px] font-semibold bg-emerald-100 text-emerald-800 px-1 py-0.2 rounded shrink-0">
+                    Silabus Resmi
+                  </span>
+                </div>
+                <p className="text-[7.5px] text-slate-600 italic line-clamp-2 leading-tight">
+                  Tabel otentik pembagian jadwal presentasi mata kuliah Statistika Pendidikan Semester 2 Pasca Sarjana IAI ASA Tahun 2026.
+                </p>
+              </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-2 text-[8.5px] text-slate-900 leading-tight">
-              {/* Column 1: Left */}
-              <div className="space-y-1.5 border-r border-slate-200 pr-1.5">
-                <div>
-                  <span className="font-bold">1. </span>
-                  <span className="font-bold">Dr. H. Eno Syafrudien, M.Si</span>
-                  <span className="block text-[7px] font-sans text-emerald-700 font-semibold">Kode Dosen: KD-01</span>
-                </div>
-                <div>
-                  <span className="font-bold">2. </span>
-                  <span className="font-bold">Dr. Hj. Siti Ma&apos;rifah, MM., MH</span>
-                  <span className="block text-[7px] font-sans text-emerald-700 font-semibold">Kode Dosen: KD-02</span>
-                </div>
-                <div>
-                  <span className="font-bold">3. </span>
-                  <span className="font-bold">Dr. H. Asep Habib Idrus Alawi, MA,M.Si,MM</span>
-                  <span className="block text-[7px] font-sans text-emerald-700 font-semibold">Kode Dosen: KD-03</span>
-                </div>
+            {/* Card 2: User Photo / Emblem Attachment */}
+            <div className="border border-slate-300 rounded p-1.5 bg-slate-50/90 flex flex-col justify-between">
+              <div className="w-full h-28 bg-white border border-slate-200 rounded flex items-center justify-center p-1 mb-1 overflow-hidden">
+                <img
+                  src={displayAttachments[0]?.url || activeLogo}
+                  alt={displayAttachments[0]?.title || "Dokumentasi"}
+                  className="max-h-full max-w-full object-contain"
+                />
               </div>
-
-              {/* Column 2: Middle */}
-              <div className="space-y-1.5 border-r border-slate-200 pr-1.5">
-                <div>
-                  <span className="font-bold">4 . </span>
-                  <span className="font-bold">Dr. Aang Darsono, S.Ag., M.Pd.I</span>
-                  <span className="block text-[7px] font-sans text-emerald-700 font-semibold">Kode Dosen: KD-04</span>
+              <div>
+                <div className="flex items-center justify-between gap-1 mb-0.5">
+                  <span className="font-bold text-[8.5px] text-slate-900 truncate">
+                    Dokumen 2: {displayAttachments[0]?.title || "Emblem Lembaga & Dokumentasi"}
+                  </span>
+                  <span className="text-[7px] font-semibold bg-amber-100 text-amber-800 px-1 py-0.2 rounded shrink-0">
+                    {displayAttachments[0]?.category || "Identitas Riset"}
+                  </span>
                 </div>
-                <div>
-                  <span className="font-bold">5 . </span>
-                  <span className="font-bold">Dr. Muhammadiah, MA</span>
-                  <span className="block text-[7px] font-sans text-emerald-700 font-semibold">Kode Dosen: KD-05</span>
-                </div>
-                <div>
-                  <span className="font-bold">6 . </span>
-                  <span className="font-bold">Dr. Saripudin Hamzah, M.Pd</span>
-                  <span className="block text-[7px] font-sans text-emerald-700 font-semibold">Kode Dosen: KD-06</span>
-                </div>
-              </div>
-
-              {/* Column 3: Right */}
-              <div className="space-y-1.5">
-                <div>
-                  <span className="font-bold">7 . </span>
-                  <span className="font-bold">Dr. Isti Nurhayati, M.Pd</span>
-                  <span className="block text-[7px] font-sans text-emerald-700 font-semibold">Kode Dosen: KD-07</span>
-                </div>
-                <div className="text-slate-400">
-                  <span className="font-bold">8 . </span>
-                  <span className="italic font-sans text-[7.5px]">-</span>
-                </div>
-                <div className="text-slate-400">
-                  <span className="font-bold">9 . </span>
-                  <span className="italic font-sans text-[7.5px]">-</span>
-                </div>
+                <p className="text-[7.5px] text-slate-600 italic line-clamp-2 leading-tight">
+                  {displayAttachments[0]?.notes || `Identitas resmi institusi ${instName} dan kelengkapan berkas akademik penelitian PAI.`}
+                </p>
               </div>
             </div>
           </div>
 
-          <p className="text-[8.5px] text-slate-600 font-sans leading-relaxed mb-1.5">
-            Dokumentasi visual autentik berikut memuat logo resmi institusi {instName} dan instrumen evaluasi pembelajaran Pendidikan Agama Islam (PAI) sebagai lampiran keabsahan tugas pascasarjana:
-          </p>
-
-          {/* Grid of Attachment Photos */}
-          <div className="grid grid-cols-2 gap-2.5 my-1.5">
-            {displayAttachments.slice(0, 2).map((att, idx) => (
-              <div
-                key={att.id || idx}
-                className="border border-slate-300 rounded p-2 bg-slate-50/80 flex flex-col justify-between"
-              >
-                <div className="w-full h-36 bg-white border border-slate-200 rounded flex items-center justify-center p-1.5 mb-1.5 overflow-hidden">
-                  <img
-                    src={att.url}
-                    alt={att.title}
-                    className="max-h-full max-w-full object-contain"
-                  />
-                </div>
-                <div className="font-sans">
-                  <div className="flex items-center justify-between gap-1 mb-0.5">
-                    <span className="font-bold text-[9px] text-slate-900 truncate">
-                      Gambar {idx + 1}: {att.title}
-                    </span>
-                    <span className="text-[7.5px] font-semibold bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded shrink-0">
-                      {att.category}
-                    </span>
-                  </div>
-                  {att.notes && (
-                    <p className="text-[8px] text-slate-600 italic line-clamp-2 leading-tight mb-0.5">
-                      {att.notes}
-                    </p>
-                  )}
-                  <div className="flex items-center justify-between text-[7.5px] text-slate-400 border-t border-slate-200 pt-0.5">
-                    <span>{att.date || currentDate}</span>
-                    <span>{instName}</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Verification Box */}
-          <div className="border border-emerald-300 bg-emerald-50/60 rounded p-2 font-sans mt-1.5 text-[8.5px]">
-            <div className="flex items-center justify-between border-b border-emerald-200 pb-0.5 mb-1">
-              <span className="font-bold text-emerald-950">PERNYATAAN KEOTENTIKAN DOKUMENTASI LAMPIRAN:</span>
+          {/* Authentic Verification Box */}
+          <div className="border border-emerald-300 bg-emerald-50/60 rounded p-1.5 font-sans mt-1 text-[8px]">
+            <div className="flex items-center justify-between border-b border-emerald-200 pb-0.5 mb-0.5">
+              <span className="font-bold text-emerald-950 uppercase">VERIFIKASI JADWAL SILABUS & DOKUMENTASI RESMI:</span>
               <span className="text-emerald-800 font-semibold">{academicYear}</span>
             </div>
-            <p className="text-slate-700 leading-tight mb-1.5 text-[8px]">
-              Seluruh lampiran daftar dosen pengampu, emblem resmi lembaga, dan dokumentasi instrumen di atas telah diverifikasi keabsahannya sebagai bagian integral dari laporan penelitian statistik pendidikan PAI pada Program Pascasarjana {instName}.
+            <p className="text-slate-700 leading-tight mb-1 text-[7.5px]">
+              Tabel pembagian kelompok dan dokumen lampiran di atas telah diverifikasi sesuai silabus resmi perkuliahan Statistika Pendidikan Program Pascasarjana Magister PAI.
             </p>
 
-            <div className="grid grid-cols-2 gap-3 text-[8.5px] text-center pt-1 border-t border-emerald-200">
+            <div className="grid grid-cols-2 gap-3 text-center pt-0.5 border-t border-emerald-200">
               <div>
-                <span className="text-slate-500 block text-[7.5px]">Dosen Pengampu / Pembimbing:</span>
-                <div className="h-6 border-b border-slate-400 mx-8 my-0.5" />
-                <span className="font-bold text-slate-900 block text-[8px]">{lecturerName}</span>
-                <span className="text-[7px] text-slate-500 block font-mono">NIP / KD. {lecturerNip}</span>
+                <span className="text-slate-500 block text-[7px]">Dosen Pengampu Mata Kuliah:</span>
+                <div className="h-5 border-b border-slate-400 mx-8 my-0.5" />
+                <span className="font-bold text-slate-900 block text-[7.5px]">Dr. Isti Nurhayati, M.Pd</span>
+                <span className="text-[6.5px] text-slate-500 block font-mono">Kode Dosen: KD-07</span>
               </div>
               <div>
-                <span className="text-slate-500 block text-[7.5px]">Koordinator Tim Mahasiswa:</span>
-                <div className="h-6 border-b border-slate-400 mx-8 my-0.5" />
-                <span className="font-bold text-slate-900 block text-[8px]">
-                  {members[0] ? members[0].name : "Nurul Aulia"}
+                <span className="text-slate-500 block text-[7px]">Ketua {activeSevenGroup.groupName}:</span>
+                <div className="h-5 border-b border-slate-400 mx-8 my-0.5" />
+                <span className="font-bold text-slate-900 block text-[7.5px]">
+                  {activeSevenGroup.leader}
                 </span>
-                <span className="text-[7px] text-slate-500 block font-mono">
-                  NIM. {members[0] ? members[0].nim : "25286130001"}
+                <span className="text-[6.5px] text-slate-500 block font-mono">
+                  {activeSevenGroup.members.length} Anggota Terdaftar
                 </span>
               </div>
             </div>
@@ -1232,6 +1301,168 @@ export const AcademicReportDocument: React.FC<AcademicReportDocumentProps> = ({
         </div>
 
         {renderRunningFooter(7, totalPages)}
+      </div>
+
+      {/* =========================================================
+          PAGE 8: LAMPIRAN III: NARASI AKADEMIK SESUAI JUDUL MAKALAH KELOMPOK
+      ========================================================= */}
+      <div id="pdf-page-8" className="pdf-page shadow-md border border-slate-300 print:shadow-none print:border-none" style={pageStyle}>
+        <div>
+          {renderRunningHeader(8)}
+
+          {/* Section Header */}
+          <div className="flex items-center justify-between border-b-2 border-emerald-900 pb-1.5 mb-2">
+            <div>
+              <span className="text-[9px] font-bold text-emerald-800 tracking-wider uppercase font-sans">
+                LAMPIRAN III: NARASI ILMIAH & METODOLOGI RISET PAI
+              </span>
+              <h3 className="text-xs font-black text-slate-900 font-sans tracking-wide">
+                NARASI MAKALAH KHUSUS {activeSevenGroup.groupName.toUpperCase()} ({activeSevenGroup.roman})
+              </h3>
+            </div>
+            <div className="text-right">
+              <span className="text-[8px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-950 font-sans border border-emerald-300">
+                Silabus IAI ASA Tahun 2026
+              </span>
+            </div>
+          </div>
+
+          {/* Active Group Identity Banner */}
+          <div className="border border-emerald-300 bg-gradient-to-r from-emerald-50 via-teal-50/50 to-slate-50 rounded p-2 mb-2 font-sans text-[8px] shadow-2xs">
+            <div className="flex items-center justify-between border-b border-emerald-200 pb-1 mb-1">
+              <div>
+                <span className="font-bold text-emerald-950 text-[9px] mr-1">
+                  {activeSevenGroup.groupName} ({activeSevenGroup.roman})
+                </span>
+                <span className="text-slate-600 font-semibold">• Ketua Tim: {activeSevenGroup.leader}</span>
+              </div>
+              <span className="text-emerald-800 font-bold">
+                Dosen: Dr. Isti Nurhayati, M.Pd (KD-07)
+              </span>
+            </div>
+            <div className="flex flex-wrap items-center gap-1 text-[7.5px] text-slate-700">
+              <span className="font-bold text-slate-600">Anggota Peneliti:</span>
+              {activeSevenGroup.members.map((m) => (
+                <span key={m.id} className="bg-white border border-slate-300 px-1.5 py-0.2 rounded text-[7px]">
+                  <strong>{m.name}</strong> <span className="text-slate-400 font-mono">({m.nim})</span>
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* DUAL PAPER NARRATIVE PANELS */}
+          <div className="space-y-2 font-sans">
+            {/* PANEL 1: Makalah Sesi 1 (Sebelum UTS) */}
+            <div className="border border-slate-300 rounded p-2 bg-white shadow-2xs">
+              <div className="flex items-center justify-between border-b border-slate-200 pb-1 mb-1">
+                <span className="text-[8.5px] font-black text-emerald-950 uppercase flex items-center gap-1">
+                  <span className="w-3.5 h-3.5 rounded-full bg-emerald-800 text-white flex items-center justify-center text-[7px]">1</span>
+                  MAKALAH SESI 1 ({activeSevenGroup.paper1.schedule}):
+                </span>
+                <span className="text-[7px] font-bold bg-amber-100 text-amber-900 px-1.5 py-0.2 rounded">
+                  Sebelum UTS
+                </span>
+              </div>
+              <h4 className="text-[9px] font-bold text-slate-900 leading-tight mb-1">
+                &ldquo;{activeSevenGroup.paper1.title}&rdquo;
+              </h4>
+              <p className="text-[7.5px] text-slate-700 leading-relaxed text-justify mb-1 italic">
+                <strong>Abstrak & Landasan Teori:</strong> {activeSevenGroup.paper1.abstract}
+              </p>
+              <div className="grid grid-cols-2 gap-1.5 text-[7px] bg-slate-50 p-1.5 rounded border border-slate-200">
+                <div>
+                  <strong className="text-slate-900 block mb-0.5">Fokus Metodologi & Formula:</strong>
+                  <span className="text-slate-600 leading-tight block">
+                    {activeSevenGroup.paper1.statisticalMetrics.join(" • ")}
+                  </span>
+                </div>
+                <div>
+                  <strong className="text-emerald-900 block mb-0.5">Implikasi Riset Pembelajaran PAI:</strong>
+                  <span className="text-slate-600 leading-tight block line-clamp-3">
+                    {activeSevenGroup.paper1.paiImplications}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* PANEL 2: Makalah Sesi 2 (Setelah UTS) */}
+            <div className="border border-slate-300 rounded p-2 bg-white shadow-2xs">
+              <div className="flex items-center justify-between border-b border-slate-200 pb-1 mb-1">
+                <span className="text-[8.5px] font-black text-emerald-950 uppercase flex items-center gap-1">
+                  <span className="w-3.5 h-3.5 rounded-full bg-emerald-800 text-white flex items-center justify-center text-[7px]">2</span>
+                  MAKALAH SESI 2 ({activeSevenGroup.paper2.schedule}):
+                </span>
+                <span className="text-[7px] font-bold bg-emerald-100 text-emerald-900 px-1.5 py-0.2 rounded">
+                  Setelah UTS
+                </span>
+              </div>
+              <h4 className="text-[9px] font-bold text-slate-900 leading-tight mb-1">
+                &ldquo;{activeSevenGroup.paper2.title}&rdquo;
+              </h4>
+              <p className="text-[7.5px] text-slate-700 leading-relaxed text-justify mb-1 italic">
+                <strong>Abstrak & Landasan Teori:</strong> {activeSevenGroup.paper2.abstract}
+              </p>
+              <div className="grid grid-cols-2 gap-1.5 text-[7px] bg-slate-50 p-1.5 rounded border border-slate-200">
+                <div>
+                  <strong className="text-slate-900 block mb-0.5">Fokus Metodologi & Uji Hipotesis:</strong>
+                  <span className="text-slate-600 leading-tight block">
+                    {activeSevenGroup.paper2.statisticalMetrics.join(" • ")}
+                  </span>
+                </div>
+                <div>
+                  <strong className="text-emerald-900 block mb-0.5">Implikasi Riset Pembelajaran PAI:</strong>
+                  <span className="text-slate-600 leading-tight block line-clamp-3">
+                    {activeSevenGroup.paper2.paiImplications}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Academic Synthesis & Recommendations */}
+          <div className="border border-slate-300 bg-slate-50 rounded p-1.5 font-sans mt-2 text-[7.5px]">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-0.5 mb-1">
+              <strong className="text-slate-900 uppercase">REKOMENDASI METODOLOGIS TESIS MAGISTER PENDIDIKAN AGAMA ISLAM:</strong>
+              <span className="text-emerald-800 font-semibold">{academicYear}</span>
+            </div>
+            <ul className="space-y-0.5 text-slate-700">
+              <li className="flex items-start gap-1">
+                <span className="text-emerald-700 font-bold">•</span>
+                <span>
+                  Hasil analisis statistik deskriptif dan inferensial di atas berfungsi sebagai pijakan kuantitatif dalam penyusunan proposal tesis Magister PAI.
+                </span>
+              </li>
+              <li className="flex items-start gap-1">
+                <span className="text-emerald-700 font-bold">•</span>
+                <span>
+                  Seluruh prosedur uji statistik mengacu pada kriteria signifikansi baku (&alpha; = 0,05) dan standar pelaporan ilmiah APA 7th Edition.
+                </span>
+              </li>
+            </ul>
+
+            {/* Signatures */}
+            <div className="grid grid-cols-2 gap-3 text-center pt-1 mt-1 border-t border-slate-200">
+              <div>
+                <span className="text-slate-500 block text-[7px]">Dosen Pengampu / Penilai Makalah:</span>
+                <div className="h-5 border-b border-slate-400 mx-8 my-0.5" />
+                <span className="font-bold text-slate-900 block text-[7.5px]">Dr. Isti Nurhayati, M.Pd</span>
+                <span className="text-[6.5px] text-slate-500 block font-mono">Kode Dosen: KD-07</span>
+              </div>
+              <div>
+                <span className="text-slate-500 block text-[7px]">Penyusun / Penulis Utama Makalah:</span>
+                <div className="h-5 border-b border-slate-400 mx-8 my-0.5" />
+                <span className="font-bold text-slate-900 block text-[7.5px]">
+                  {activeSevenGroup.leader}
+                </span>
+                <span className="text-[6.5px] text-slate-500 block font-mono">
+                  {activeSevenGroup.groupName} Pascasarjana IAI ASA
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {renderRunningFooter(8, totalPages)}
       </div>
     </div>
   );

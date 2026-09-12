@@ -107,4 +107,11 @@ export interface GroupAssignmentInfo {
   members: GroupMember[];
   logoUrl?: string;
   attachments?: ResearchAttachment[];
+  paperTitle1?: string;
+  paperSchedule1?: string;
+  paperNarrative1?: string;
+  paperTitle2?: string;
+  paperSchedule2?: string;
+  paperNarrative2?: string;
+  activePaperIndex?: 1 | 2;
 }

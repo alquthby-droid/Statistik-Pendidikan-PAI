@@ -240,7 +240,7 @@ export const GroupConfigModal: React.FC<GroupConfigModalProps> = ({
                 </span>
                 <h4 className="text-xs font-black text-emerald-950 flex items-center gap-1.5">
                   <Sparkles className="w-3.5 h-3.5 text-emerald-700" />
-                  Pilih Cepat dari 6 Kelompok Resmi (Kelompok I s/d Kelompok VI)
+                  Pilih Cepat dari 7 Kelompok Resmi (Kelompok I s/d Kelompok VII)
                 </h4>
               </div>
               <button
@@ -249,13 +249,13 @@ export const GroupConfigModal: React.FC<GroupConfigModalProps> = ({
                 className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-900 bg-white hover:bg-emerald-100 border border-emerald-300 px-2.5 py-1 rounded-lg transition-colors cursor-pointer self-start sm:self-auto"
               >
                 <FileSpreadsheet className="w-3 h-3 text-emerald-700" />
-                <span>{showAllGroupsBreakdown ? "Tutup Tabel Rekap" : "Lihat Tabel Rekap 6 Kelompok"}</span>
+                <span>{showAllGroupsBreakdown ? "Tutup Tabel Rekap" : "Lihat Tabel Rekap 7 Kelompok"}</span>
                 {showAllGroupsBreakdown ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
               </button>
             </div>
 
-            {/* 6 Group Cards */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+            {/* 7 Group Cards */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
               {IAI_ALJIHAD_SIX_GROUPS_DEFINITIONS.map((grp) => {
                 const isSelected =
                   formData.isGroupAssignment &&
@@ -315,19 +315,19 @@ export const GroupConfigModal: React.FC<GroupConfigModalProps> = ({
               })}
             </div>
 
-            {/* Expandable Breakdown of All 6 Groups */}
+            {/* Expandable Breakdown of All 7 Groups */}
             {showAllGroupsBreakdown && (
               <div className="bg-white border border-emerald-200 rounded-lg p-3 space-y-3 animate-fadeIn">
                 <div className="flex items-center justify-between border-b border-slate-200 pb-1.5">
                   <span className="font-bold text-slate-900 text-xs">
-                    Rincian Pembagian 6 Kelompok & Peran Anggota (Rombel Semester 1 - N = 29)
+                    Rincian Pembagian 7 Kelompok & Peran Anggota (Silabus & Rombel Semester 1 - N = 29)
                   </span>
                   <span className="text-[10px] bg-emerald-100 text-emerald-900 font-semibold px-2 py-0.5 rounded">
                     Total 29 Mahasiswa
                   </span>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5 text-[10.5px]">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5 text-[10.5px]">
                   {IAI_ALJIHAD_SIX_GROUPS_DEFINITIONS.map((grp) => (
                     <div
                       key={grp.groupNumber}

@@ -2,7 +2,11 @@ import React, { useState, useRef } from "react";
 import { ResearchAttachment } from "../types";
 import { LOGO_IAI_ALJIHAD_DATA_URI } from "../assets/logoIaiAlJihad";
 import { LOGO_IAI_ASA_DATA_URI } from "../assets/logoIaiAsa";
-import { IAI_ALJIHAD_LECTURERS, DAFTAR_DOSEN_DOCUMENT_DATA_URI } from "../data/institutions";
+import {
+  IAI_ALJIHAD_LECTURERS,
+  DAFTAR_DOSEN_DOCUMENT_DATA_URI,
+  DAFTAR_KELOMPOK_MAKALAH_DOCUMENT_DATA_URI,
+} from "../data/institutions";
 import {
   Camera,
   Upload,
@@ -143,6 +147,21 @@ export const LampiranGambarModal: React.FC<LampiranGambarModalProps> = ({
     showToast("Dokumen resmi Daftar Nama Dosen (KD 01 - KD 07) berhasil ditambahkan ke lampiran!");
   };
 
+  const handleAddJadwalMakalahDocument = () => {
+    const sampleJadwal: ResearchAttachment = {
+      id: `att-jadwal-${Date.now()}`,
+      url: DAFTAR_KELOMPOK_MAKALAH_DOCUMENT_DATA_URI,
+      title: "Dokumen Resmi: Jadwal & Pembagian 7 Kelompok Makalah Pascasarjana IAI ASA 2026",
+      category: "Surat Pengantar & SK",
+      date: "12 September 2026",
+      notes: "Daftar resmi pembagian 7 kelompok makalah dan jadwal presentasi perkuliahan ke-2 s/d ke-10 mata kuliah Statistika Pendidikan Semester 2 Pasca Sarjana IAI ASA Tahun 2026. Dosen Pengampu: Dr. Isti Nurhayati, M.Pd.",
+      fileSize: "24.6 KB",
+    };
+
+    setItems((prev) => [sampleJadwal, ...prev]);
+    showToast("Dokumen resmi Jadwal & Pembagian 7 Kelompok Makalah IAI ASA 2026 berhasil ditambahkan ke lampiran!");
+  };
+
   const handleSave = () => {
     if (onSave) {
       onSave(items, currentLogoUrl);
@@ -196,6 +215,14 @@ export const LampiranGambarModal: React.FC<LampiranGambarModalProps> = ({
             >
               <Upload className="w-3.5 h-3.5" />
               <span>Unggah Foto Baru</span>
+            </button>
+            <button
+              onClick={handleAddJadwalMakalahDocument}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-950 border border-amber-300 font-bold text-xs transition-colors cursor-pointer active:scale-95"
+              title="Tambahkan dokumen resmi jadwal presentasi dan pembagian 7 kelompok makalah IAI ASA Tahun 2026"
+            >
+              <FileText className="w-3.5 h-3.5 text-amber-700" />
+              <span>+ Jadwal & 7 Kelompok (IAI ASA 2026)</span>
             </button>
             <button
               onClick={handleAddDosenDocument}

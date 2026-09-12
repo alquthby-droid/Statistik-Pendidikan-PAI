@@ -2,10 +2,11 @@ import { GroupAssignmentInfo, GroupMember } from "../types";
 import { LOGO_IAI_ALJIHAD_DATA_URI } from "../assets/logoIaiAlJihad";
 import { DAFTAR_DOSEN_DOCUMENT_DATA_URI } from "./lecturers";
 import { IAI_ALJIHAD_SEMESTER_1_STUDENTS } from "./students";
+import { DAFTAR_KELOMPOK_MAKALAH_DOCUMENT_DATA_URI } from "./makalahSevenGroups";
 
 export interface SixGroupDefinition {
-  groupNumber: 1 | 2 | 3 | 4 | 5 | 6;
-  roman: "I" | "II" | "III" | "IV" | "V" | "VI";
+  groupNumber: 1 | 2 | 3 | 4 | 5 | 6 | 7;
+  roman: "I" | "II" | "III" | "IV" | "V" | "VI" | "VII";
   groupName: string;
   subTitle: string;
   topic: string;
@@ -16,7 +17,18 @@ export interface SixGroupDefinition {
   groupInfo: GroupAssignmentInfo;
 }
 
+export type SevenGroupDefinition = SixGroupDefinition;
+
 const COMMON_ATTACHMENTS = [
+  {
+    id: "att-jadwal-makalah",
+    url: DAFTAR_KELOMPOK_MAKALAH_DOCUMENT_DATA_URI,
+    title: "Dokumen Resmi: Jadwal & Pembagian 7 Kelompok Makalah Pascasarjana IAI ASA 2026",
+    category: "Surat Pengantar & SK" as const,
+    date: "12 September 2026",
+    notes: "Daftar resmi pembagian 7 kelompok makalah dan jadwal presentasi perkuliahan ke-2 s/d ke-10 mata kuliah Statistika Pendidikan Pascasarjana IAI ASA. Dosen Pengampu: Dr. Isti Nurhayati, M.Pd.",
+    fileSize: "24.6 KB",
+  },
   {
     id: "att-dosen",
     url: DAFTAR_DOSEN_DOCUMENT_DATA_URI,
@@ -571,10 +583,107 @@ export const IAI_ALJIHAD_SIX_GROUPS_DEFINITIONS: SixGroupDefinition[] = [
       attachments: COMMON_ATTACHMENTS,
     },
   },
+
+  // ==========================================
+  // KELOMPOK VII: (5 Mahasiswa)
+  // Sesuai Silabus Jadwal Makalah IAI ASA 2026
+  // Dosen Pengampu: Dr. Isti Nurhayati, M.Pd (KD-07)
+  // ==========================================
+  {
+    groupNumber: 7,
+    roman: "VII",
+    groupName: "Kelompok VII (Tujuh)",
+    subTitle: "Uji Hipotesis, Statistical Power & Integrasi Kode Analisis Komputasi PAI",
+    topic: "Uji Hipotesis, Nilai p (p-Value), Kesalahan Tipe I & II, Statistical Power dan Integrasi Kode Analisis Komputasi Tesis PAI",
+    leader: "Siti Khumairoh",
+    lecturer: "Dr. Isti Nurhayati, M.Pd",
+    lecturerNip: "KD-07",
+    members: [
+      {
+        id: "7-1",
+        name: "Siti Khumairoh",
+        nim: "25286130007",
+        role: "Ketua Kelompok & Analis Formulasi Hipotesis & Alpha",
+      },
+      {
+        id: "7-2",
+        name: "L.M.SUPRIAL WAHID",
+        nim: "25286130014",
+        role: "Analis Kesalahan Tipe I, Tipe II & Statistical Power",
+      },
+      {
+        id: "7-3",
+        name: "Intan Fajri Nurul Ilmi",
+        nim: "25286130026",
+        role: "Analis Alur Kerja Integrasi Data & Kode Komputasi",
+      },
+      {
+        id: "7-4",
+        name: "Mukhsin",
+        nim: "25286130022",
+        role: "Verifikator Validitas Output Sintaksis & Tabel",
+      },
+      {
+        id: "7-5",
+        name: "AGUS MULIADI",
+        nim: "25286130027",
+        role: "Penyusun Sintesis Luaran & Dokumentasi Ilmiah",
+      },
+    ],
+    groupInfo: {
+      isGroupAssignment: true,
+      institutionName: "Institut Agama Islam Al-Jihad Shalahuddin Al-Ayyubi Jakarta",
+      faculty: "Fakultas Tarbiyah / Program Pascasarjana",
+      studyProgram: "Magister (S2) Pendidikan Agama Islam",
+      courseName: "Statistik Pendidikan & Evaluasi Pembelajaran PAI",
+      groupName: "Kelompok VII (Tujuh)",
+      lecturer: "Dr. Isti Nurhayati, M.Pd",
+      lecturerNip: "KD-07",
+      academicYear: "Tahun Akademik 2026 Genap",
+      logoUrl: LOGO_IAI_ALJIHAD_DATA_URI,
+      members: [
+        {
+          id: "7-1",
+          name: "Siti Khumairoh",
+          nim: "25286130007",
+          role: "Ketua Kelompok & Analis Formulasi Hipotesis & Alpha",
+        },
+        {
+          id: "7-2",
+          name: "L.M.SUPRIAL WAHID",
+          nim: "25286130014",
+          role: "Analis Kesalahan Tipe I, Tipe II & Statistical Power",
+        },
+        {
+          id: "7-3",
+          name: "Intan Fajri Nurul Ilmi",
+          nim: "25286130026",
+          role: "Analis Alur Kerja Integrasi Data & Kode Komputasi",
+        },
+        {
+          id: "7-4",
+          name: "Mukhsin",
+          nim: "25286130022",
+          role: "Verifikator Validitas Output Sintaksis & Tabel",
+        },
+        {
+          id: "7-5",
+          name: "AGUS MULIADI",
+          nim: "25286130027",
+          role: "Penyusun Sintesis Luaran & Dokumentasi Ilmiah",
+        },
+      ],
+      attachments: COMMON_ATTACHMENTS,
+    },
+  },
 ];
+
+export const IAI_ALJIHAD_SEVEN_GROUPS_DEFINITIONS = IAI_ALJIHAD_SIX_GROUPS_DEFINITIONS;
 
 export const IAI_ALJIHAD_SIX_GROUPS: GroupAssignmentInfo[] =
   IAI_ALJIHAD_SIX_GROUPS_DEFINITIONS.map((def) => def.groupInfo);
+
+export const IAI_ALJIHAD_SEVEN_GROUPS: GroupAssignmentInfo[] = IAI_ALJIHAD_SIX_GROUPS;
 
 export function getGroupByNumber(num: number): GroupAssignmentInfo {
   const found = IAI_ALJIHAD_SIX_GROUPS_DEFINITIONS.find((g) => g.groupNumber === num);

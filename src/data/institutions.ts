@@ -11,10 +11,21 @@ import {
 import {
   IAI_ALJIHAD_SIX_GROUPS,
   IAI_ALJIHAD_SIX_GROUPS_DEFINITIONS,
+  IAI_ALJIHAD_SEVEN_GROUPS,
+  IAI_ALJIHAD_SEVEN_GROUPS_DEFINITIONS,
   getGroupByNumber,
   getStudentGroupMapping,
   SixGroupDefinition,
+  SevenGroupDefinition,
 } from "./groups";
+import {
+  IAI_ASA_SEVEN_GROUPS_DEFINITIONS,
+  DAFTAR_KELOMPOK_MAKALAH_DOCUMENT_DATA_URI,
+  DAFTAR_KELOMPOK_MAKALAH_DOCUMENT_SVG,
+  getSevenGroupByNumber,
+  getSevenGroupByStudentName,
+  SevenGroupMakalahDefinition,
+} from "./makalahSevenGroups";
 
 export {
   IAI_ALJIHAD_SEMESTER_1_STUDENTS,
@@ -24,10 +35,17 @@ export {
   DAFTAR_DOSEN_DOCUMENT_SVG,
   IAI_ALJIHAD_SIX_GROUPS,
   IAI_ALJIHAD_SIX_GROUPS_DEFINITIONS,
+  IAI_ALJIHAD_SEVEN_GROUPS,
+  IAI_ALJIHAD_SEVEN_GROUPS_DEFINITIONS,
   getGroupByNumber,
   getStudentGroupMapping,
+  IAI_ASA_SEVEN_GROUPS_DEFINITIONS,
+  DAFTAR_KELOMPOK_MAKALAH_DOCUMENT_DATA_URI,
+  DAFTAR_KELOMPOK_MAKALAH_DOCUMENT_SVG,
+  getSevenGroupByNumber,
+  getSevenGroupByStudentName,
 };
-export type { LecturerItem, SixGroupDefinition };
+export type { LecturerItem, SixGroupDefinition, SevenGroupDefinition, SevenGroupMakalahDefinition };
 
 export interface InstitutionOption {
   name: string;
@@ -170,6 +188,15 @@ export const DEFAULT_GROUP_INFO: GroupAssignmentInfo = {
     },
   ],
   attachments: [
+    {
+      id: "att-jadwal-makalah",
+      url: DAFTAR_KELOMPOK_MAKALAH_DOCUMENT_DATA_URI,
+      title: "Dokumen Resmi: Jadwal & Pembagian 7 Kelompok Makalah Pascasarjana IAI ASA 2026",
+      category: "Surat Pengantar & SK" as const,
+      date: "12 September 2026",
+      notes: "Daftar pembagian 7 kelompok makalah & jadwal presentasi perkuliahan ke-2 s/d ke-10 mata kuliah Statistika Pendidikan Semester 2 Pasca Sarjana IAI ASA Tahun 2026. Dosen Pengampu: Dr. Isti Nurhayati, M.Pd.",
+      fileSize: "24.6 KB",
+    },
     {
       id: "att-dosen",
       url: DAFTAR_DOSEN_DOCUMENT_DATA_URI,
